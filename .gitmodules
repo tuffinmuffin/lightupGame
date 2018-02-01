@@ -1,3 +1,6 @@
 [submodule "APA102_Pi"]
 	path = APA102_Pi
 	url = https://github.com/tuffinmuffin/APA102_Pi.git
+[submodule "Adafruit_Python_GPIO"]
+	path = Adafruit_Python_GPIO
+	url = https://github.com/adafruit/Adafruit_Python_GPIO.git
