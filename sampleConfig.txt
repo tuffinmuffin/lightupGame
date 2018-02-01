@@ -1,0 +1,67 @@
+#optional for future use (127.0.0.1 means we are host)
+masterIp=127.0.0.1
+
+#list of client IP addresses. Future use
+clientList=
+
+#force an IP for us - optional, I might not finish
+#ipAddr=10.0.0.1/24
+
+#number of APA102 connected and
+#software SPI or hardware config
+#and other params for initing the LED library
+APA102_num_led=5
+#default mosi 10. can be ommited   
+APA102_mosi=10
+#default pin 11. can be ommited
+APA102_sclk=11
+#default value rgb. can be ommited
+APA102_order='rbg'
+#adjust brightness, max 31. Can be ommited to max
+APA102_global_brightness=20
+
+
+ledColorOrder=rgb
+
+#button MAC - empty means accept any bootp search
+macForButton=
+
+#light timer (in seconds)
+timer=10
+
+#fade out timer - time to mix colors in seconds
+fade=0.5
+
+#button lockout (in seconds
+btTimeout = 20
+
+#colorList (rgb)
+#color_ indicates a color field. field will be named based on data after _
+#colors can also be started with # to match web color formatting
+color_red=0xFF0000
+color_blue=0x0000FF
+color_green=0x00FF00
+color_yellow=0xFFFF00
+color_purple=0xFF00FF
+color_cyan=0x00FFFF
+color_white=0xFFFFFF
+color_black=0x0
+color_off=0x0
+
+#keywords - ## means might be ignored
+#repeat - restart list
+##timer=xx - keep color for time separate from default
+##setFade=xx - change fade timer
+#goto=patternName
+##fade=xx - change color fade time for next color change
+##setTimer=xx - change timer interval
+
+
+#pattern to use
+pattern=red,blue,green,black,yellow,repeat
+
+#errorPattern - run when faulted
+errorPattern=red,timer=1,black,repeat
+
+#run when starting patterns
+initPattern=white,timer=1,black,white,timer=1,goto=pattern
