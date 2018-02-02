@@ -17,6 +17,7 @@ class Configuration:
         self.app = {}
         
         config = configparser.ConfigParser()
+        config.optionxform = str 
         config.read(configFile)
         self.config = config
         
@@ -40,13 +41,27 @@ class Configuration:
         return self.colors
     
     def parseApa102(self):
-        return self.parseGeneric("APA102",self.apa102)
+        self.parseGeneric("APA102",self.apa102)
+        
+        for key in self.apa102:
+            try:
+                self.apa102[key] = int(self.apa102[key])
+            except:
+                pass    
+        return self.apa102
     
     def parseNetwork(self):
         return self.parseGeneric("NETWORK", self.network)
     
     def parseApp(self):
-        return self.parseGeneric("APP", self.app)
+        self.parseGeneric("APP", self.app)
+        
+        for key in self.app:
+            try:
+                self.app[key] = float(self.app[key])
+            except:
+                pass    
+        return self.app
 
     def parsePatterns(self):
         return self.parseGeneric("PATTERNS", self.patterns)
@@ -57,7 +72,7 @@ class Configuration:
             return output
         for key in self.config[field]:
             output[key] = self.config[field][key]
-        print(output)
+        #print(output)
         return output
     
 

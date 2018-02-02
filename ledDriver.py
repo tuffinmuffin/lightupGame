@@ -50,15 +50,14 @@ class ledManagerTest:
 
 class LedManager:
     
-    def __init__(self, updateFreq, ledController):
-        self.updateFreq = updateFreq
-        self.updatePeriod = 1 / self.updateFreq
+    def __init__(self, updateRateHz, ledController):
+        self.updateRateHz = updateRateHz
+        self.updatePeriod = 1 / self.updateRateHz
         self.leds = ledController
         self.queue = Queue()
         self.currentColor = buildColorDict(0,0,0)
         
-        self.ledWriterThread = threading.Thread(target = self.ledWriter, name = "ledThreadWriter")
-        self.ledWriterThread.setDaemon(True)
+        self.ledWriterThread = threading.Thread(target = self.ledWriter, name = "ledThreadWriter", daemon=True)
         self.ledWriterThread.start()
         
 
@@ -83,7 +82,7 @@ class LedManager:
                 time.sleep(delay)
                 #get next color, if there isn't one ready then we go ahead and write last color
                 self.currentColor = self.queue.get(False)
-                print("new color %s"%(str(self.currentColor)))
+                #print("new color %s"%(str(self.currentColor)))
             except queue.Empty:
                 pass
             #loop back to top and write the current Color
@@ -96,7 +95,7 @@ class LedManager:
         
         colorList = buildColorDict(red,green,blue, bright_percent)
         for key in self.currentColor:
-            colorList[key] = generateSteps(self.currentColor[key], colorList[key], self.updateFreq,transTime)
+            colorList[key] = generateSteps(self.currentColor[key], colorList[key], self.updateRateHz,transTime)
         
         for i in range(len(colorList['green'])):
             colorStep = {}
