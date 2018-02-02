@@ -84,7 +84,7 @@ class LedManager:
                 #get next color, if there isn't one ready then we go ahead and write last color
                 self.currentColor = self.queue.get(False)
                 print("new color %s"%(str(self.currentColor)))
-            except:
+            except queue.Empty:
                 pass
             #loop back to top and write the current Color
             
@@ -123,6 +123,7 @@ def generateSteps(start, stop, freq, duration):
     return output
 
 if __name__ == "__main__":
+    #ledTest = apa102.APA102(5)
     ledTest = ledManagerTest()
     ledManager = LedManager(200,ledTest)
     ledManager.update(100,100,102,.1)
