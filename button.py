@@ -12,7 +12,7 @@ from Adafruit_GPIO import GPIO
 
 
 class buttonGpio:
-    def __init__(self, pin, pullState):
+    def __init__(self, pin, pullState = GPIO.PUD_UP):
         self.gpio = GPIO.get_platform_gpio()
         self.gpio.setup(pin,GPIO.IN,pullState)
         self.pin = pin

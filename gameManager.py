@@ -10,13 +10,15 @@ import time
 import sys
 import APA102_Pi
 
+import button
 import threading
 
 class GameManager:
     
-    def __init__(self, ledManager, config):
+    def __init__(self, ledManager, button, config):
         self.ledManager = ledManager
         self.config = config
+        self.button = button
         
 
         self.buttonLockoutCurrent = self.buttonLockoutDefault = config.getValue(config.app,'btTimeout',0.0)
@@ -25,7 +27,6 @@ class GameManager:
                      
         self.fadeTimerCurrent = self.fadeTimerDefault = config.getValue(config.app,'fadeTimer',0.25)
         
-        self.buttonGpio = config.getValue(config.app,'buttonGpio',4)
 
         
         self.buttonThread = threading.Thread(target = self.buttonMonitor, name = "buttonMonitor", daemon=True)
@@ -55,7 +56,7 @@ class GameManager:
         while(threading.get_ident() == self.buttonThread.ident):
             #print(dir(threading.current_thread()))
             #add code here to check the button
-            state = getButtonStatus(self.buttonGpio)
+            state = self.button.getButtonState()
             
             #if button is pressed
             if state:
@@ -79,17 +80,6 @@ class GameManager:
 
 
 
-test1 = False
-
-def getButtonStatus(gpio):
-    global test1
-    if test1:
-        test1 = False
-        return True
-    return False
-
-
-
 def main():
     global game
     log.info("Game Started")
@@ -109,17 +99,17 @@ def main():
         return
         
 
-    if 'updateRateHz' in config.app:
-        updateRateHz = config.app['updateRateHz']
-    else:
-        print(config.app)
-        log.info("unable to find updateRateHz in config. Using default")
-        #default
-        updateRateHz = 100
+    
+    updateRateHz = config.getValue(config.app, 'updateRateHz', 100)
+    
     
     ledManager = ledDriver.LedManager(updateRateHz,led)
+
+
+    buttonGpio = config.getValue(config.app,'buttonGpio',9)
+    gpioButton = button.buttonGpio(buttonGpio)
     
-    game = GameManager(ledManager,config)
+    game = GameManager(ledManager, gpioButton, config)
 
 
 if __name__ == "__main__":
