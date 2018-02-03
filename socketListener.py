@@ -49,6 +49,7 @@ class DashListener:
                     
         except Exception as err:
             log.exception("Socket error")
+            self.socket.close()
             return
             
 

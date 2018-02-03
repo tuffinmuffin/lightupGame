@@ -37,7 +37,8 @@ class GameManager:
         
         self.patterns = config.patterns
 
-        self.reset()
+        #self.reset()
+        self.ledManager.update(0,0,0,0.0)
         
     '''
     cycles to the next element without changing timers
