@@ -23,7 +23,7 @@ class GameManager:
         self.button = button
         
         self.syncLockout = 10
-        self.syncLast = -1000.0
+        self.syncLast = -10
         
         self.running = False
 
@@ -195,7 +195,7 @@ class GameManager:
             
             
     def syncListener(self, msg, source):
-        currentTime = time.clock()
+        currentTime = time.time()
 
         log.info("sync recieved at %s. msg %s.", currentTime, msg)
         
@@ -206,9 +206,9 @@ class GameManager:
             else:
                 log.info("starting patterns and timers")
                 self.reset()
-            
+            self.syncLast = currentTime            
         else:
-            log.info("sync lockout not met igniring message")
+            log.info("sync lockout not met ignoring message %f + %f < %f", self.syncLockout, self.syncLast, currentTime)
         
 
 

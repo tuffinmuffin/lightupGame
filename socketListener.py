@@ -41,13 +41,13 @@ class DashListener:
                 #print(msg)
                 
                 if(self.hostname in message):
-                    print("host found")
+                    #print("host found")
                     for name in self.validSeq:
                         if name in message:
                             self.callback(message, source)
                             break
                 else:
-                    log.debug("host not found %s",self.hostname)    
+                    log.info("host not found %s",self.hostname)    
         except Exception as err:
             log.exception("Socket error")
             self.socket.close()

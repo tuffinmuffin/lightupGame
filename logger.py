@@ -8,9 +8,9 @@ log = logging.getLogger()
 if not log.hasHandlers():
     log.setLevel(logging.DEBUG)
     fh = logging.FileHandler('log.txt')
-    fh.setLevel(logging.DEBUG)
+    fh.setLevel(logging.INFO)
     ch = logging.StreamHandler()
-    ch.setLevel(logging.DEBUG)
+    ch.setLevel(logging.WARNING)
     
     formatter = logging.Formatter('%(asctime)s - %(funcName)s:%(lineno)s - %(levelname)s - %(message)s')
     fh.setFormatter(formatter)
