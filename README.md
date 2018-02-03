@@ -15,3 +15,8 @@ add IP filter for amazon dash button
 setup dhcp script to run the script from this repo
 
 add absoulte path python / gameManger.py and script to rc file
+
+
+use 
+git clone --recursive <repo>
+to checkout
