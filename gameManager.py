@@ -154,6 +154,7 @@ def main():
     global ledManager
     global gpioButton
     log.info("Game Started")
+    sim = False
     print(sys.argv)
     if len(sys.argv) < 2:
         log.error("Config file not given")
