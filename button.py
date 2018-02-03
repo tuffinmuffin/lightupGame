@@ -12,14 +12,17 @@ from Adafruit_GPIO import GPIO
 
 
 class buttonGpio:
-    def __init__(self, pin, pullState = GPIO.PUD_UP):
+    def __init__(self, pin, invert = True, pullState = GPIO.PUD_UP):
         self.gpio = GPIO.get_platform_gpio()
         self.gpio.setup(pin,GPIO.IN,pullState)
         self.pin = pin
+        self.invert = invert
   
     def getButtonState(self):
         state = self.gpio.input(self.pin)
-        print(state)
+        if(self.invert):
+             state = not state 
+        #print(state)
         return state
         
 

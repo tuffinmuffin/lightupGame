@@ -106,7 +106,7 @@ def main():
     ledManager = ledDriver.LedManager(updateRateHz,led)
 
 
-    buttonGpio = config.getValue(config.app,'buttonGpio',9)
+    buttonGpio = int(config.getValue(config.app,'buttonGpio',9))
     gpioButton = button.buttonGpio(buttonGpio)
     
     game = GameManager(ledManager, gpioButton, config)
@@ -114,3 +114,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    time.sleep(120)
