@@ -43,7 +43,10 @@ class DashListener:
                 if(self.hostname in message):
                     #print("host found")
                     for name in self.validSeq:
-                        if name in message:
+                        #print("checking %s"%(name))
+                        #goldfish has "old" so only look at first few chars
+                        if name in message[:10]:
+                            #print("Found Name in message")
                             self.callback(message, source)
                             break
                 else:

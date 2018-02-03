@@ -7,7 +7,7 @@ import logging
 log = logging.getLogger()
 if not log.hasHandlers():
     log.setLevel(logging.DEBUG)
-    fh = logging.FileHandler('log.txt')
+    fh = logging.FileHandler('/var/log/gameLog.txt')
     fh.setLevel(logging.INFO)
     ch = logging.StreamHandler()
     ch.setLevel(logging.WARNING)

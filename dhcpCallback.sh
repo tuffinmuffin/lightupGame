@@ -12,7 +12,7 @@ tstamp="`date '+%Y-%m-%d %H:%M:%S'`"
 
 payload="${op} ${ip} ${tstamp} (host=${hostname}): mac=${mac}"
 
-echo $payload >> /home/nbeasley/dhcp.log
+echo $payload >> /var/log/dhcpScript.log
 
 echo $payload |  socat - udp-datagram:255.255.255.255:2000,broadcast
 
