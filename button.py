@@ -12,20 +12,20 @@ from Adafruit_GPIO import GPIO
 
 
 class buttonGpio:
-    def __init__(self, gpio, pullState):
+    def __init__(self, pin, pullState):
         self.gpio = GPIO.get_platform_gpio()
-        self.gpio.setup(gpio,GPIO.IN,pullState)
-        self.gpio = gpio
+        self.gpio.setup(pin,GPIO.IN,pullState)
+        self.pin = pin
   
     def getButtonState(self):
-        state = self.gpio.input(self.gpio)
+        state = self.gpio.input(self.pin)
         print(state)
         return state
         
 
 
 if __name__ == "__main__":
-    testButton = buttonGpio(8, GPIO.PUD_UP)
+    testButton = buttonGpio(9, GPIO.PUD_UP)
     
     testButton.getButtonState()
     import time
