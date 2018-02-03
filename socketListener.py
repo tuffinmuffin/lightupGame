@@ -32,8 +32,12 @@ class DashListener:
             
             while(threading.get_ident() == self.dashSockThread.ident):
                 msg = self.socket.recvfrom(1024)
-                log.info("Recieved '%s'"%(msg))
-                self.callback(msg)
+                message = str(msg[0], 'ascii')
+                #print(dir(message))
+                source = str(msg[1])
+                log.info("Recieved '%s' from %s",message,source)
+                #print(msg)
+                self.callback(message)
         except Exception as err:
             log.exception("Socket error")
             return
