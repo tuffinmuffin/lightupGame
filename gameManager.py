@@ -66,7 +66,7 @@ class GameManager:
         self.currentPattern = self.patterns['init'][:]    
         
         
-        self.colorThread = threading.Thread(target = self.colorCycler, name = "Color Cycler", daemon=True)
+        self.colorThread = threading.Thread(target = self.colorCycler, name = "Color Cycler", daemon=False)
         self.colorThread.start()
     
     def shutdown(self):
@@ -161,9 +161,9 @@ def main():
     ledManager = ledDriver.LedManager(updateRateHz,led)
 
 
-    #buttonGpio = int(config.getValue(config.app,'buttonGpio',9))
+    buttonGpio = int(config.getValue(config.app,'buttonGpio',9))
     gpioButton = button.buttonGpio(buttonGpio)
-    gpioButton = button.sampleButton()
+    #gpioButton = button.sampleButton()
     game = GameManager(ledManager, gpioButton, config)
 
 
