@@ -168,7 +168,7 @@ def main():
     updateRateHz = config.getValue(config.app, 'updateRateHz', 100)
 
     buttonGpio = int(config.getValue(config.app,'buttonGpio',9))
-<<<<<<< HEAD
+
     if not sim:
         gpioButton = button.buttonGpio(buttonGpio)
         #create led manager
@@ -183,10 +183,7 @@ def main():
         
     ledManager = ledDriver.LedManager(updateRateHz,led)
     
-=======
-    gpioButton = button.buttonGpio(buttonGpio)
-    #gpioButton = button.sampleButton()
->>>>>>> 25b568464196892ec0eca0caa2bf24c21a378e1e
+
     game = GameManager(ledManager, gpioButton, config)
 
 
