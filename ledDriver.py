@@ -115,6 +115,8 @@ def buildColorDict(red,green,blue, bright_percent = 100):
 
 
 def generateSteps(start, stop, freq, duration):
+    if duration <=0:
+        return [stop]
     samples = int(freq * duration)
     step = (stop - start) / samples
     output = []

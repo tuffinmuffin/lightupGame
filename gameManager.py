@@ -147,7 +147,36 @@ class GameManager:
             if nextValue == 'repeat':
                 log.info("%s pattern: repeating"%(self.currentPatternName))
                 self.currentPattern = self.patterns[self.currentPatternName].copy()
+                continue
                 
+            if "=" in nextValue:
+                splits = nextValue.split("=")
+                name = splits[0]
+                value = splits[1]
+                
+                if name == "goto":
+                    log.info("goto:%s"%(nextValue))
+                    self.currentPatternName = value
+                    self.currentPattern = self.patterns[value].copy()
+                    continue
+                if name == 'timer':
+                    log.info('timer:%s'%(nextValue))
+                    self.lightTimerCurrent = float(value)
+                    continue
+                if name == 'setTimer':
+                    log.info("setTimer:%s"%(nextValue))
+                    self.lightTimerCurrent = self.lightTimerDefault = float(value)
+                    continue
+                if name == 'fade':
+                    log.info('fade:%s'%(nextValue))
+                    self.fadeTimerCurrent = float(value)
+                    continue
+                if name == 'fadeTimer':
+                    log.info("fadeTimer:%s"%(nextValue))
+                    self.fadeTimerCurrent = self.fadeTimerDefault = float(value)
+                    continue
+            log.warning("Unknown command %s"%(nextValue))
+
 
 def main():
     global game
