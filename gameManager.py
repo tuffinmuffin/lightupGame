@@ -23,7 +23,8 @@ class GameManager:
         self.button = button
         
         self.syncLockout = 10
-        self.syncLast = -10
+	#wait 10 seconds for boot
+        self.syncLast = time.time()
         
         self.running = False
 
@@ -39,7 +40,11 @@ class GameManager:
         self.patterns = config.patterns
 
         #self.reset()
-        self.ledManager.update(0,0,0,0.0)
+        self.ledManager.update(255,255,255,0.0)
+        self.ledManager.update(0,0,0,2.0)
+        time.sleep(2)
+        self.ledManager.update(0,0,0,1.0)
+
         
         
         
