@@ -63,7 +63,7 @@ class GameManager:
         
         self.currentPatternName = 'init'
         #get a copy of the pattern so we can pop from it.
-        self.currentPattern = self.patterns['init'][:]    
+        self.currentPattern = self.patterns['init'].copy()  
         
         
         self.colorThread = threading.Thread(target = self.colorCycler, name = "Color Cycler", daemon=True)
@@ -101,11 +101,12 @@ class GameManager:
             #add code here to check the button
             try:
                 data = self.cycle()
-            
+                log.debug("Color Cycle data %s sleep %f"%(data, self.lightTimerCurrent))
                 time.sleep(self.lightTimerCurrent)
-                log.debug("Color Cycle data %s"%(data))
             except:
+                log.exception("Color cycle error")
                 self.playError()
+                return
                 
         log.info("Color cycler Done")        
 
@@ -114,13 +115,25 @@ class GameManager:
     and kicks off the playback
     '''
     def playError(self):
-        pass
+        #disable the button
+        if(self.buttonThread):
+            self.buttonThread._delete()
+        #brute force the error message
+        self.currentPatternName = "error"
+        self.currentPattern = self.patterns['error'].copy()
+        print(self.currentPattern)
+        
+        while(len(self.currentPattern) != 0):
+            self.setNextState();
+            time.sleep(self.lightTimerCurrent);
+            self.lightTimerCurrent = self.lightTimerDefault
 
     def setNextState(self):
         
         #iterate over the list until we find a color to set
         while(True):
             nextValue = self.currentPattern.pop(0)
+            log.debug("Popped %s"%(nextValue))
             
             #if we are a color, set the new color and return. 
             if nextValue in self.colors:
@@ -131,7 +144,10 @@ class GameManager:
                 ledManager.update(red,green,blue,self.fadeTimerCurrent)
                 return color
             
-
+            if nextValue == 'repeat':
+                log.info("%s pattern: repeating"%(self.currentPatternName))
+                self.currentPattern = self.patterns[self.currentPatternName].copy()
+                
 
 def main():
     global game
@@ -143,27 +159,29 @@ def main():
         log.error("Config file not given")
         return
         
-    config = configReader.Configuration(sys.argv[1])
-
-    #create led manager
-    try:
-        led = APA102_Pi.apa102.APA102(**config.apa102)
-        #led = ledDriver.ledManagerTest()
-    except:
-        log.exception("Failed to create leds")
-        return
-        
-
+    for i in sys.argv:
+        if i == "sim":
+            sim = True
+            log.info("Enabling SIM")
+    config = configReader.Configuration(sys.argv[1])    
     
     updateRateHz = config.getValue(config.app, 'updateRateHz', 100)
-    
-    
+
+    buttonGpio = int(config.getValue(config.app,'buttonGpio',9))
+    if not sim:
+        gpioButton = button.buttonGpio(buttonGpio)
+        #create led manager
+        try:
+            led = APA102_Pi.apa102.APA102(**config.apa102)
+        except:
+            log.exception("Failed to create leds")
+            return        
+    else:
+        gpioButton = button.sampleButton()
+        led = ledDriver.ledManagerTest()
+        
     ledManager = ledDriver.LedManager(updateRateHz,led)
-
-
-    #buttonGpio = int(config.getValue(config.app,'buttonGpio',9))
-    gpioButton = button.buttonGpio(buttonGpio)
-    gpioButton = button.sampleButton()
+    
     game = GameManager(ledManager, gpioButton, config)
 
 

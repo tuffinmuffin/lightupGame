@@ -46,6 +46,7 @@ class Configuration:
                # print(log)
                 log.warning("Failed to parse color %s:%s"%(key,self.config['COLORS'][key]))
 
+        self.colors =  {k.lower(): v for k, v in self.colors.items()}
         return self.colors
     
     def parseApa102(self):
@@ -75,6 +76,7 @@ class Configuration:
         patterns = self.parseGeneric("PATTERNS", self.patterns)
         for name in patterns:
             patterns[name] = patterns[name].split(',')
+            
         return patterns
 
     def parseGeneric(self, field, output):
