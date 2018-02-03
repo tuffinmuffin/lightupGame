@@ -12,6 +12,8 @@ import APA102_Pi
 
 import button
 import threading
+import socketListener
+
 
 class GameManager:
     
@@ -19,6 +21,9 @@ class GameManager:
         self.ledManager = ledManager
         self.config = config
         self.button = button
+        
+        self.syncLockout = 10
+        self.syncLast = 0.0
         
 
         self.buttonLockoutCurrent = self.buttonLockoutDefault = config.getValue(config.app,'btTimeout',0.0)
@@ -45,13 +50,7 @@ class GameManager:
         
         return self.setNextState()
         
-    
-    '''
-    advance the button to the next state due to 
-    state timeout
-    '''
-    def advance(self):
-        pass
+
     
     '''
     reset the counter and resets sequence to init
@@ -70,7 +69,9 @@ class GameManager:
         self.colorThread.start()
     
     def shutdown(self):
-        pass
+        self.buttonThread._delete()
+        self.colorThread._delete()
+        self.ledManager.update(0,0,0,1.0)
     
     
     def buttonMonitor(self):
@@ -176,6 +177,24 @@ class GameManager:
                     self.fadeTimerCurrent = self.fadeTimerDefault = float(value)
                     continue
             log.warning("Unknown command %s"%(nextValue))
+            
+            
+    def syncListener(self, msg, source):
+        currentTime = time.clock()
+
+        log.info("sync recieved at %s. msg %s.", currentTime, msg)
+        
+        if self.syncLockout + time.syncLast < currentTime:
+            if(self.running):
+                log.info("Stopping patterns and entering standby")
+                self.shutdown()
+            else:
+                log.info("starting patterns and timers")
+                self.reset()
+            
+        else:
+            log.info("sync lockout not met igniring message")
+        
 
 
 def main():
@@ -199,6 +218,10 @@ def main():
 
     buttonGpio = int(config.getValue(config.app,'buttonGpio',9))
 
+
+    dashName = config.getValue(config.network,'dashName', '')
+    socketForNotification = int(config.getValue(config.network, 'socketForNotification', 2000))
+    
     if not sim:
         gpioButton = button.buttonGpio(buttonGpio)
         #create led manager
@@ -211,11 +234,14 @@ def main():
         gpioButton = button.sampleButton()
         led = ledDriver.ledManagerTest()
         
+        
+        
     ledManager = ledDriver.LedManager(updateRateHz,led)
     
 
     game = GameManager(ledManager, gpioButton, config)
 
+    dashListener = socketListener.DashListener(socketForNotification, game.syncListener, dashName)
 
 if __name__ == "__main__":
     main()

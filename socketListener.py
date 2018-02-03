@@ -14,11 +14,13 @@ import socket
 
 class DashListener:
     
-    def __init__(self, port, callback,interface = "", validSeq =['add', 'old']):
+    def __init__(self, port, callback, hostname, validSeq =['add', 'old'], interface = ""):
         self.port = port
         self.interface = interface
         self.callback = callback
         self.spawnListener()
+        self.hostname = hostname
+        self.validSeq = validSeq
 
 
     def spawnListener(self):
@@ -37,7 +39,14 @@ class DashListener:
                 source = str(msg[1])
                 log.info("Recieved '%s' from %s",message,source)
                 #print(msg)
-                self.callback(message)
+                
+                if(self.hostname in msg):
+                
+                    for name in self.validSeq:
+                        if name in message:
+                            self.callback(message)
+                            break
+                    
         except Exception as err:
             log.exception("Socket error")
             return
