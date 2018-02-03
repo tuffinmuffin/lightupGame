@@ -27,6 +27,14 @@ class buttonGpio:
         
 
 
+class sampleButton:
+    
+    def __init__(self,*args):
+        self.state = False
+        
+    def getButtonState(self):
+        return self.state
+
 if __name__ == "__main__":
     testButton = buttonGpio(9, GPIO.PUD_UP)
     

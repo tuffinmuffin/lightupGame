@@ -106,6 +106,8 @@ class LedManager:
         
     
 
+def splitColor(color):
+    return (color >> 16) & 0xFF,  (color >> 8) & 0xFF, color & 0xFF
 
 
 def buildColorDict(red,green,blue, bright_percent = 100):

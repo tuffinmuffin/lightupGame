@@ -72,7 +72,10 @@ class Configuration:
         return self.app
 
     def parsePatterns(self):
-        return self.parseGeneric("PATTERNS", self.patterns)
+        patterns = self.parseGeneric("PATTERNS", self.patterns)
+        for name in patterns:
+            patterns[name] = patterns[name].split(',')
+        return patterns
 
     def parseGeneric(self, field, output):
         if not field in self.config.sections():

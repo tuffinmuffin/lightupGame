@@ -27,16 +27,24 @@ class GameManager:
                      
         self.fadeTimerCurrent = self.fadeTimerDefault = config.getValue(config.app,'fadeTimer',0.25)
         
-
         
-        self.buttonThread = threading.Thread(target = self.buttonMonitor, name = "buttonMonitor", daemon=True)
-        self.buttonThread.start()
+        self.colors = config.colors
+        
+        self.patterns = config.patterns
+
+        self.reset()
         
     '''
     cycles to the next element without changing timers
     '''
     def cycle(self):
-        pass
+        #reset defaults
+        self.buttonLockoutCurrent = self.buttonLockoutDefault
+        self.fadeTimerCurrent = self.fadeTimerDefault
+        self.lightTimerCurrent = self.lightTimerDefault
+        
+        return self.setNextState()
+        
     
     '''
     advance the button to the next state due to 
@@ -49,6 +57,19 @@ class GameManager:
     reset the counter and resets sequence to init
     '''
     def reset(self):
+        
+        self.buttonThread = threading.Thread(target = self.buttonMonitor, name = "buttonMonitor", daemon=True)
+        self.buttonThread.start()
+        
+        self.currentPatternName = 'init'
+        #get a copy of the pattern so we can pop from it.
+        self.currentPattern = self.patterns['init'][:]    
+        
+        
+        self.colorThread = threading.Thread(target = self.colorCycler, name = "Color Cycler", daemon=True)
+        self.colorThread.start()
+    
+    def shutdown(self):
         pass
     
     
@@ -59,14 +80,10 @@ class GameManager:
             state = self.button.getButtonState()
             
             #if button is pressed
-            if state:
-                #reload default timeout incase it was updated
-                
-                self.buttonLockoutCurrent = self.buttonLockoutDefault
-                
+            if state:                
                 #call cycle. This may update the current button timeout
-                self.cycle()
-                log.info("Button was pressed. sleeping for %f seconds"%(self.buttonLockoutCurrent))
+                data = self.cycle()
+                log.info("Button was pressed. sleeping for %f seconds. cycle %d"%(self.buttonLockoutCurrent, data))
                 #if the button is pressed, we will lockout the button for
                 #specifed timeout. We do this by just sleeping before checking the button again
                 time.sleep(self.buttonLockoutCurrent)
@@ -77,11 +94,49 @@ class GameManager:
                 
         log.info("Button Monitor Done")
         
+        
+    def colorCycler(self):
+        while(threading.get_ident() == self.colorThread.ident):
+            #print(dir(threading.current_thread()))
+            #add code here to check the button
+            try:
+                data = self.cycle()
+            
+                time.sleep(self.lightTimerCurrent)
+                log.debug("Color Cycle data %s"%(data))
+            except:
+                self.playError()
+                
+        log.info("Color cycler Done")        
 
+    '''
+    When an error occures this resets the output to the error pattern
+    and kicks off the playback
+    '''
+    def playError(self):
+        pass
+
+    def setNextState(self):
+        
+        #iterate over the list until we find a color to set
+        while(True):
+            nextValue = self.currentPattern.pop(0)
+            
+            #if we are a color, set the new color and return. 
+            if nextValue in self.colors:
+                color = self.colors[nextValue]
+                red, green, blue = ledDriver.splitColor(color)
+                
+                self.currentColor = color
+                ledManager.update(red,green,blue,self.fadeTimerCurrent)
+                return color
+            
 
 
 def main():
     global game
+    global ledManager
+    global gpioButton
     log.info("Game Started")
     print(sys.argv)
     if len(sys.argv) < 2:
@@ -107,12 +162,12 @@ def main():
 
 
     buttonGpio = int(config.getValue(config.app,'buttonGpio',9))
-    gpioButton = button.buttonGpio(buttonGpio)
-    
+    #gpioButton = button.buttonGpio(buttonGpio)
+    gpioButton = button.sampleButton()
     game = GameManager(ledManager, gpioButton, config)
 
 
 if __name__ == "__main__":
     main()
 
-    time.sleep(120)
+    #time.sleep(120)
