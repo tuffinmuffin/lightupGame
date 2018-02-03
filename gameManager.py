@@ -41,10 +41,11 @@ class GameManager:
 
         #self.reset()
         self.ledManager.update(255,255,255,0.0)
-        self.ledManager.update(0,0,0,2.0)
+        time.sleep(2)
+        self.ledManager.update(0,0,255,0)
         time.sleep(2)
         self.ledManager.update(0,0,0,1.0)
-
+        
         
         
         
