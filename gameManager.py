@@ -23,8 +23,9 @@ class GameManager:
         self.button = button
         
         self.syncLockout = 10
-        self.syncLast = 0.0
+        self.syncLast = -1000.0
         
+        self.running = False
 
         self.buttonLockoutCurrent = self.buttonLockoutDefault = config.getValue(config.app,'btTimeout',0.0)
             
@@ -68,12 +69,14 @@ class GameManager:
         
         self.colorThread = threading.Thread(target = self.colorCycler, name = "Color Cycler", daemon=False)
         self.colorThread.start()
+        self.running = True
     
     def shutdown(self):
-        self.buttonThread._delete()
-        self.colorThread._delete()
+        self.colorThread = threading.Thread(target = self.colorCycler, name = "Color Cycler", daemon=False)
+        self.buttonThread = threading.Thread(target = self.buttonMonitor, name = "buttonMonitor", daemon=True)
+
         self.ledManager.update(0,0,0,1.0)
-    
+        self.running = False
     
     def buttonMonitor(self):
         while(threading.get_ident() == self.buttonThread.ident):
@@ -185,7 +188,7 @@ class GameManager:
 
         log.info("sync recieved at %s. msg %s.", currentTime, msg)
         
-        if self.syncLockout + time.syncLast < currentTime:
+        if (self.syncLockout + self.syncLast) < currentTime:
             if(self.running):
                 log.info("Stopping patterns and entering standby")
                 self.shutdown()

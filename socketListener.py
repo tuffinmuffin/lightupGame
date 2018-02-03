@@ -40,13 +40,14 @@ class DashListener:
                 log.info("Recieved '%s' from %s",message,source)
                 #print(msg)
                 
-                if(self.hostname in msg):
-                
+                if(self.hostname in message):
+                    print("host found")
                     for name in self.validSeq:
                         if name in message:
-                            self.callback(message)
+                            self.callback(message, source)
                             break
-                    
+                else:
+                    log.debug("host not found %s",self.hostname)    
         except Exception as err:
             log.exception("Socket error")
             self.socket.close()
@@ -58,7 +59,7 @@ class DashListener:
 
 
 
-def sampleCallback(msg):
+def sampleCallback(msg, source):
     log.info("callback msg %s"%(msg))
     
 
