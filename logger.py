@@ -7,7 +7,9 @@ import logging
 log = logging.getLogger()
 if not log.hasHandlers():
     log.setLevel(logging.DEBUG)
-    fh = logging.FileHandler('log.txt')
+    fh = logging.RotatingFileHandler("/var/log/gameLog.log', mode='a', maxBytes=1024*1024, 
+                                 backupCount=2, encoding=None, delay=0)
+    #fh = logging.FileHandler('log.txt')
     fh.setLevel(logging.INFO)
     ch = logging.StreamHandler()
     ch.setLevel(logging.WARNING)
