@@ -147,8 +147,8 @@ def main():
 
     #create led manager
     try:
-        #led = APA102_Pi.apa102.APA102(**config.apa102)
-        led = ledDriver.ledManagerTest()
+        led = APA102_Pi.apa102.APA102(**config.apa102)
+        #led = ledDriver.ledManagerTest()
     except:
         log.exception("Failed to create leds")
         return
@@ -161,8 +161,8 @@ def main():
     ledManager = ledDriver.LedManager(updateRateHz,led)
 
 
-    buttonGpio = int(config.getValue(config.app,'buttonGpio',9))
-    #gpioButton = button.buttonGpio(buttonGpio)
+    #buttonGpio = int(config.getValue(config.app,'buttonGpio',9))
+    gpioButton = button.buttonGpio(buttonGpio)
     gpioButton = button.sampleButton()
     game = GameManager(ledManager, gpioButton, config)
 
