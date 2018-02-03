@@ -41,6 +41,17 @@ class GameManager:
         #self.reset()
         self.ledManager.update(0,0,0,0.0)
         
+        
+        
+    '''
+    creates tasks for timer and buttons
+    this can be used to create new tasks or mark
+    the current ones to go away
+    '''
+    def _createTasks(self):
+        self.buttonThread = threading.Thread(target = self.buttonMonitor, name = "buttonMonitor", daemon=True)
+        self.colorThread = threading.Thread(target = self.colorCycler, name = "Color Cycler", daemon=False)
+        
     '''
     cycles to the next element without changing timers
     '''
@@ -58,22 +69,22 @@ class GameManager:
     reset the counter and resets sequence to init
     '''
     def reset(self):
+        self._createTasks()
         
-        self.buttonThread = threading.Thread(target = self.buttonMonitor, name = "buttonMonitor", daemon=True)
-        self.buttonThread.start()
         
+        
+        #reset data
         self.currentPatternName = 'init'
         #get a copy of the pattern so we can pop from it.
         self.currentPattern = self.patterns['init'].copy()  
         
         
-        self.colorThread = threading.Thread(target = self.colorCycler, name = "Color Cycler", daemon=False)
+        self.buttonThread.start()
         self.colorThread.start()
         self.running = True
     
     def shutdown(self):
-        self.colorThread = threading.Thread(target = self.colorCycler, name = "Color Cycler", daemon=False)
-        self.buttonThread = threading.Thread(target = self.buttonMonitor, name = "buttonMonitor", daemon=True)
+        self._createTasks()
 
         self.ledManager.update(0,0,0,1.0)
         self.running = False
