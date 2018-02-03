@@ -27,6 +27,14 @@ class Configuration:
         self.parseApp()
         self.parsePatterns()
         
+    
+    def getValue(self, data, name, default):
+        try:
+            return data[name]
+        except:
+            log.warning("No config found for %s using %s"%(name,default))
+            return default
+        
         
     def parseColors(self):
         colors = {}

@@ -19,38 +19,13 @@ class GameManager:
         self.config = config
         
 
-        if 'btTimeout' in config.app:
-            self.buttonLockoutDefault = config.app['btTimeout']
-        else:
-            log.info("No button timeout using default of 0")
-            self.buttonLockoutDefault = 0.0
-        self.buttonLockoutCurrent = self.buttonLockoutDefault
+        self.buttonLockoutCurrent = self.buttonLockoutDefault = config.getValue(config.app,'btTimeout',0.0)
             
-
-        if 'lightTimer' in config.app:
-            self.lightTimerDefault = config.app['lightTimer']
-        else:
-            log.info("No light timer using default of 10.0")
-            self.lightTimerDefault = 10.0
-            
-        self.lightTimerCurrent = self.lightTimerDefault;
-            
+        self.lightTimerCurrent = self.lightTimerDefault = config.getValue(config.app,'lightTimer',10.0)
+                     
+        self.fadeTimerCurrent = self.fadeTimerDefault = config.getValue(config.app,'fadeTimer',0.25)
         
-        if 'fadeTimer' in config.app:
-            self.fadeTimerDefault = config.app['fadeTimer']
-        else:
-            log.info("No fade timeout using default of 0.25")
-            self.fadeTimerDefault = 0.25
-            
-        self.fadeTimerCurrent = self.fadeTimerDefault; 
-        
-        
-        
-        if 'buttonGpio' in config.app:
-            self.buttonGpio = config.app['buttonGpio']
-        else:
-            log.info("Default button GPIO being used (4)")
-            self.buttonGpio = 4
+        self.buttonGpio = config.getValue(config.app,'buttonGpio',4)
 
         
         self.buttonThread = threading.Thread(target = self.buttonMonitor, name = "buttonMonitor", daemon=True)
