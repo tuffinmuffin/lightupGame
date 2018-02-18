@@ -14,5 +14,6 @@ payload="${op} ${ip} ${tstamp} (host=${hostname}): mac=${mac}"
 
 echo $payload >> /var/log/dhcpScript.log
 
-echo $payload |  socat - udp-datagram:255.255.255.255:2000,broadcast
+#echo $payload |  socat - udp-datagram:255.255.255.255:2000,broadcast
 
+echo $payload |  socat - udp-datagram:192.168.50.255:2000,broadcast
